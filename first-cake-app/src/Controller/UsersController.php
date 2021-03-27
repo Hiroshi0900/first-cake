@@ -2,16 +2,44 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
+use PDO;
 
-/**
- * Users Controller
- *
- * @property \App\Model\Table\UsersTable $Users
- *
- * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
- */
 class UsersController extends AppController
 {
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['add','logout']);
+    }
+
+    /**
+     * Login method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function login(){
+
+        if($this->request->is('post') === true){
+            // user情報取得
+            $user = $this->Auth->identify();
+            if($user){
+                // 正常の場合
+                $this->Auth->setUser($user);
+                return $this->redirect($this->Auth->redirectUrl());
+            }
+            // 例外エラー（ユーザーが取得できない）
+            $this->Flash->error(__('認証情報が一致しません。入力内容を確認してください。'));
+        }
+    }
+    /**
+     * Logout method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function logout(){
+        return $this->redirect($this->Auth->logout());
+    }
     /**
      * Index method
      *
@@ -19,9 +47,11 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->paginate($this->Users);
+        // bakeの処理
+        // $users = $this->paginate($this->Users);
 
-        $this->set(compact('users'));
+        // $this->set(compact('users'));
+        $this->set('users' , $this->Users->find('all'));
     }
 
     /**
@@ -39,7 +69,6 @@ class UsersController extends AppController
 
         $this->set('user', $user);
     }
-
     /**
      * Add method
      *

@@ -47,24 +47,32 @@ class UsersTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        $validator
-            ->nonNegativeInteger('id')
-            ->allowEmptyString('id', null, 'create');
+        // 制御を記述
+        // $validator
+        //     ->nonNegativeInteger('id')
+        //     ->allowEmptyString('id', null, 'create');
 
-        $validator
-            ->scalar('username')
-            ->maxLength('username', 50)
-            ->allowEmptyString('username');
+        // $validator
+        //     ->scalar('username')
+        //     ->maxLength('username', 50)
+        //     ->allowEmptyString('username');
 
-        $validator
-            ->scalar('password')
-            ->maxLength('password', 255)
-            ->allowEmptyString('password');
+        // $validator
+        //     ->scalar('password')
+        //     ->maxLength('password', 255)
+        //     ->allowEmptyString('password');
 
+        // $validator
+        //     ->scalar('role')
+        //     ->maxLength('role', 20)
+        //     ->allowEmptyString('role');
         $validator
-            ->scalar('role')
-            ->maxLength('role', 20)
-            ->allowEmptyString('role');
+            ->notEmpty('username','username is required')
+            ->notEmpty('password','password is required')
+            ->add('role','inlist',[
+                'rule'    => ['inlist',['admin','author']],
+                'message' => 'Please enter a valid rule'
+            ]);
 
         return $validator;
     }
