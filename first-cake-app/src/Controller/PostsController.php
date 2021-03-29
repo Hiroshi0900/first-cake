@@ -5,6 +5,9 @@ use App\Controller;
 
 class PostsController extends AppController {
     public $helpers = ['Html'];
+    // public $components = [
+    //     'Post'
+    // ];
     public function initialize()
     {
         echo'来てるよ';

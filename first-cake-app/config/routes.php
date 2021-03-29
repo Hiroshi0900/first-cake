@@ -12,7 +12,6 @@ Router::scope('/', function (RouteBuilder $routes) {
         'httpOnly' => true,
     ]));
     $routes->applyMiddleware('csrf');
-
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
     $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
@@ -27,5 +26,7 @@ Router::scope('/', function (RouteBuilder $routes) {
     );
     $routes->connect('/devs', ['controller' => 'Devs', 'action' => 'index','index']);
     $routes->connect('/devs-create', ['controller' => 'Devs', 'action' => 'create','index']);
+
+
 });
 
