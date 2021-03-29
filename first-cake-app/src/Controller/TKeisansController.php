@@ -76,8 +76,8 @@ class TKeisansController extends AppController
         $tKeisan = $this->TKeisans->get($id, [
             'contain' => [],
         ]);
-        // ユーザーデータ取得
-        // $users 
+        // ユーザーデータ取得 // TODO あとで対応する
+        $users = $this->User->getAllUser();
         if ($this->request->is(['patch', 'post', 'put'])) {
             $tKeisan = $this->TKeisans->patchEntity($tKeisan, $this->request->getData());
             if ($this->TKeisans->save($tKeisan)) {
@@ -88,6 +88,9 @@ class TKeisansController extends AppController
             $this->Flash->error(__('The t keisan could not be saved. Please, try again.'));
         }
         $this->set(compact('tKeisan'));
+        
+        // ユーザーデータ追加
+        $this->set(compact('users'));
     }
 
     /**

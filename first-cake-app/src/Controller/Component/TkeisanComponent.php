@@ -57,12 +57,6 @@ class TkeisanComponent extends Component {
             't_keisans.created','t_keisans.modified',
         ])
         ->sql();
-// echo'<pre>';
-// var_dump($tKeisan->all());
-// exit;
-        // foreach($tKeisans as $row){
-        //     $tk = $row;
-        // }    
         return $tKeisan->first();
     }
 
