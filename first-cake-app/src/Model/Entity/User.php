@@ -39,8 +39,9 @@ class User extends Entity
     ];
 
     // パスワードのハッシュ化(protectedメソッド)
-    protected function _setPassword(String $password){
-        if(strlen($password) > 0){
+    protected function _setPassword(String $password)
+    {
+        if (strlen($password) > 0) {
             return (new DefaultPasswordHasher)->hash($password);
         }
     }

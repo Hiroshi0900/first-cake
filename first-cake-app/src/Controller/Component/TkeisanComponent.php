@@ -1,23 +1,26 @@
-<?php 
+<?php
 namespace App\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\ORM\TableRegistry;
 use WyriHaximus\TwigView\Lib\Twig\Extension\Strings;
 
-class TkeisanComponent extends Component {
-	public $uses = ['User'];  //ここに使うモデルを列記
+class TkeisanComponent extends Component
+{
+    public $uses = ['User'];  //ここに使うモデルを列記
     // データ取得ファンクション
-    public function getTkeisan(){
+    public function getTkeisan()
+    {
         // return '引数は'.'なし';
-// echo'<pre>';
-// var_dump(TableRegistry::get('t_keisans'));
-// exit;
+        // echo'<pre>';
+        // var_dump(TableRegistry::get('t_keisans'));
+        // exit;
         return $this->_getTkeisanList();
     }
 
     // データ取得用のクエリインスタンス整形ファンクション
-    protected function _getTkeisanList(){
+    protected function _getTkeisanList()
+    {
         $t = TableRegistry::get('t_keisans');
         $tKeisans = $t->find();
         $tKeisans->join([
@@ -34,10 +37,12 @@ class TkeisanComponent extends Component {
         return $tKeisans;
     }
     // 詳細画面用データ集計ファンクション
-    public function getTkeisanDetail(int $id){
+    public function getTkeisanDetail(int $id)
+    {
         return $this->_getTkeisanDetail($id);
     }
-    protected function _getTkeisanDetail(int $id){
+    protected function _getTkeisanDetail(int $id)
+    {
         $t = TableRegistry::get('t_keisans');
         // $tKeisan = $t->get($id, [
         //     'contain' => [],
@@ -59,5 +64,4 @@ class TkeisanComponent extends Component {
         ->sql();
         return $tKeisan->first();
     }
-
 }

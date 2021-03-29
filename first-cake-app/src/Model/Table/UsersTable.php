@@ -67,9 +67,9 @@ class UsersTable extends Table
         //     ->maxLength('role', 20)
         //     ->allowEmptyString('role');
         $validator
-            ->notEmpty('username','username is required')
-            ->notEmpty('password','password is required')
-            ->add('role','inlist',[
+            ->notEmpty('username', 'username is required')
+            ->notEmpty('password', 'password is required')
+            ->add('role', 'inlist', [
                 'rule'    => ['inlist',['admin','author']],
                 'message' => 'Please enter a valid rule'
             ]);

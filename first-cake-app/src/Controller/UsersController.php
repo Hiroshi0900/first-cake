@@ -18,12 +18,12 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|null
      */
-    public function login(){
-
-        if($this->request->is('post') === true){
+    public function login()
+    {
+        if ($this->request->is('post') === true) {
             // user情報取得
             $user = $this->Auth->identify();
-            if($user){
+            if ($user) {
                 // 正常の場合
                 $this->Auth->setUser($user);
                 return $this->redirect($this->Auth->redirectUrl());
@@ -37,7 +37,8 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|null
      */
-    public function logout(){
+    public function logout()
+    {
         return $this->redirect($this->Auth->logout());
     }
     /**
@@ -51,7 +52,7 @@ class UsersController extends AppController
         // $users = $this->paginate($this->Users);
 
         // $this->set(compact('users'));
-        $this->set('users' , $this->Users->find('all'));
+        $this->set('users', $this->Users->find('all'));
     }
 
     /**

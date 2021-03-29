@@ -3,7 +3,8 @@ namespace App\Controller;
 
 use App\Controller;
 
-class PostsController extends AppController {
+class PostsController extends AppController
+{
     public $helpers = ['Html'];
     // public $components = [
     //     'Post'
@@ -12,16 +13,18 @@ class PostsController extends AppController {
     {
         echo'来てるよ';
     }
-    public function index(){
+    public function index()
+    {
         $data = ['ken','mike','Rei'];
 
-        $this->set('test',$data);
+        $this->set('test', $data);
         // echo'<pre>';
         // var_dump($this->request->params);
         // die('index :: ');
     }
 
-    public function view($id){
+    public function view($id)
+    {
         die('PostID :: '.$id);
     }
 }
