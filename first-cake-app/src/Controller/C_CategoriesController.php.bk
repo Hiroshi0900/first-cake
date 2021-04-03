@@ -4,18 +4,19 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 /**
- * TKeisans Controller
+ * Categories Controller
  *
- * @property \App\Model\Table\TKeisansTable $TKeisans
+ * @property \App\Model\Table\CategoriesTable $Categories
  *
  * @method \App\Model\Entity\TKeisan[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class TKeisansController extends AppController
+class CategoriesController extends AppController
 {
     public $components = [
         'TKeisan',
         'User'
     ];
+    protected $_template = '/category/edit';
     /**
      * Index method
      *
@@ -23,11 +24,11 @@ class TKeisansController extends AppController
      */
     public function index()
     {
-        // $tKeisans = $this->paginate($this->TKeisans);
-        // $tKeisans2 = $this->paginate($this->TKeisans);
-        $tKeisans = $this->TKeisan->getTkeisan();
-        $tKeisans = $this->paginate($tKeisans);
-        $this->set(compact('tKeisans'));
+        // $Categories = $this->paginate($this->Categories);
+        // $Categories2 = $this->paginate($this->Categories);
+        $Categories = $this->TKeisan->getTkeisan();
+        $Categories = $this->paginate($Categories);
+        $this->set(compact('Categories'));
     }
 
     /**
@@ -51,12 +52,12 @@ class TKeisansController extends AppController
     public function add()
     {
         // -------- データ取得 -------- //
-        $tKeisan = $this->TKeisans->newEntity();
+        $tKeisan = $this->Categories->newEntity();
         // ユーザーデータ取得 // TODO あとで対応する
         $users = $this->User->getAllUser();
         if ($this->request->is('post')) {
-            $tKeisan = $this->TKeisans->patchEntity($tKeisan, $this->request->getData());
-            if ($this->TKeisans->save($tKeisan)) {
+            $tKeisan = $this->Categories->patchEntity($tKeisan, $this->request->getData());
+            if ($this->Categories->save($tKeisan)) {
                 $this->Flash->success(__('The t keisan has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -78,24 +79,31 @@ class TKeisansController extends AppController
     public function edit($id = null)
     {
         // 計算データ
-        $tKeisan = $this->TKeisans->get($id, [
+        $tKeisan = $this->Categories->get($id, [
             'contain' => [],
         ]);
-        // ユーザーデータ取得 // TODO あとで対応する
-        $users = $this->User->getAllUser();
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $tKeisan = $this->TKeisans->patchEntity($tKeisan, $this->request->getData());
-            if ($this->TKeisans->save($tKeisan)) {
-                $this->Flash->success(__('登録完了です。'));
+        // // ユーザーデータ取得 // TODO あとで対応する
+        // $users = $this->User->getAllUser();
+        // if ($this->request->is(['patch', 'post', 'put'])) {
+        //     $tKeisan = $this->Categories->patchEntity($tKeisan, $this->request->getData());
+        //     if ($this->Categories->save($tKeisan)) {
+        //         $this->Flash->success(__('登録完了です。'));
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The t keisan could not be saved. Please, try again.'));
-        }
+        //         return $this->redirect(['action' => 'index']);
+        //     }
+        //     $this->Flash->error(__('The t keisan could not be saved. Please, try again.'));
+        // }
         $this->set(compact('tKeisan'));
-        
-        // ユーザーデータ追加
-        $this->set(compact('users'));
+echo'<pre>';
+var_dump($id);
+exit;
+        if($id){
+            // $this->render('/Categories/edit/'.$id);
+        }else {
+            $this->render('/Categories/edit');
+        }
+        // // ユーザーデータ追加
+        // $this->set(compact('users'));
     }
 
     /**
@@ -108,8 +116,8 @@ class TKeisansController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $tKeisan = $this->TKeisans->get($id);
-        if ($this->TKeisans->delete($tKeisan)) {
+        $tKeisan = $this->Categories->get($id);
+        if ($this->Categories->delete($tKeisan)) {
             $this->Flash->success(__('The t keisan has been deleted.'));
         } else {
             $this->Flash->error(__('The t keisan could not be deleted. Please, try again.'));
