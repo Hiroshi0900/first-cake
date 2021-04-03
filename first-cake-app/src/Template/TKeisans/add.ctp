@@ -11,11 +11,20 @@
     </ul>
 </nav>
 <div class="tKeisans form large-9 medium-8 columns content">
+<?php
+// ユーザーオブジェクトよりセレクトボックスデータ整形
+$selUser = [];
+foreach($users as $uRow){
+    $selUser[$uRow->id] = $uRow->username;
+}
+?>
     <?= $this->Form->create($tKeisan) ?>
     <fieldset>
         <legend><?= __('Add T Keisan') ?></legend>
         <?php
-            echo $this->Form->control('userId');
+            echo $this->Form->input('userId', 
+                array('label'=>'User Name', 'type'=>'select', 'options'=>$selUser , 'value' =>$tKeisan->userId)
+            );
             echo $this->Form->control('targetDate', [
                 'empty' => true,
                 'type'  => 'text'

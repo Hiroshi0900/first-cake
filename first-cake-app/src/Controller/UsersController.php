@@ -23,6 +23,7 @@ class UsersController extends AppController
         if ($this->request->is('post') === true) {
             // user情報取得
             $user = $this->Auth->identify();
+
             if ($user) {
                 // 正常の場合
                 $this->Auth->setUser($user);

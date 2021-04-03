@@ -28,8 +28,7 @@ foreach($users as $uRow){
     <fieldset>
         <legend><?= __('Edit T Keisan') ?></legend>
         <?php
-        echo $this->Form->input('userId', array('label'=>'User Name', 'type'=>'select', 'options'=>$selUser , 'value' =>$tKeisan->userId));
-
+            echo $this->Form->input('userId', array('label'=>'User Name', 'type'=>'select', 'options'=>$selUser , 'value' =>$tKeisan->userId));
             // echo $this->Form->select(
             //     'userId', 
             //     // [

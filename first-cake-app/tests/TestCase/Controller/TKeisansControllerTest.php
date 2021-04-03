@@ -2,6 +2,7 @@
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\TKeisansController;
+use Cake\I18n\Time;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -22,6 +23,24 @@ class TKeisansControllerTest extends TestCase
     public $fixtures = [
         'app.TKeisans',
     ];
+
+    /**
+     * setup method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $_SERVER['HTTP_HOST'] = 'localhost'; // これはお作法かな
+        $this->configRequest([ // ヘッダー項目をセット
+            'headers' => [
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json',
+            ]
+        ]);
+        Time::setTestNow(new Time('2021-03-31 00:00'));
+    }
 
     /**
      * Test index method
@@ -48,8 +67,13 @@ class TKeisansControllerTest extends TestCase
      *
      * @return void
      */
-    public function testAdd()
+    public function testAddView()
     {
+        // $this->markTestIncomplete('Not implemented yet.');
+        // 画面が正常に描画されているかテスト
+        // $this->get('/t-keisans/index');
+        // $this->assertResponseOk(); 
+        // $this->assertContentType('text/html'); 
         $this->markTestIncomplete('Not implemented yet.');
     }
 
