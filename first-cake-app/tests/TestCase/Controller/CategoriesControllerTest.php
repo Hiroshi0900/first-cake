@@ -2,10 +2,14 @@
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\CategoriesController;
+use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Cake\ORM\TableRegistry;
+
+use function Symfony\Component\String\s;
 
 /**
  * App\Controller\CategoriesController Test Case
@@ -41,7 +45,7 @@ class CategoriesControllerTest extends TestCase
                 'Content-Type' => 'application/json',
             ]
         ]);
-        Time::setTestNow(new Time('2021-03-31 00:00'));
+        // Time::setTestNow(new Time('2021-03-31 00:00'));
         $this->session(
           [
             'Auth' => [
@@ -91,65 +95,123 @@ class CategoriesControllerTest extends TestCase
         // ]);
         $this->get('/categories/index-ddd');
         $this->assertResponseError(); //エラーが出て正解
-        $this->assertResponseContains('カテゴリーコード');
-        $this->assertResponseContains('カテゴリー名');
-        $this->assertResponseContains('サブ カテゴリー名');
         // $this->assertContentType('text/html'); 
     }
     public function testTrueIndexView()
     {
-        // $this->markTestIncomplete('Not implemented yet.');
-        // 画面が正常に描画されているかテスト
-        // ログイン処理の実行
-        // ログイン処理の実行
-        // $this->post('/users/login', [
-        //     'username' => 'dev',
-        //     'password' => 'aaaa0000'
-        // ]);
         $this->get('/categories/index');
         $this->assertResponseOk();
         $this->assertResponseContains('カテゴリーコード');
         $this->assertResponseContains('カテゴリー名');
         $this->assertResponseContains('サブカテゴリー名');
-        // $this->assertContentType('text/html'); 
     }
 
 
-    public function testFailAddView()
+    public function testFailAddView01()
     {
-        // $this->markTestIncomplete('Not implemented yet.');
-        // 画面が正常に描画されているかテスト
-        // ログイン処理の実行
-        // ログイン処理の実行
-        // $this->post('/users/login', [
-        //     'username' => 'dev',
-        //     'password' => 'aaaa0000'
-        // ]);
         $this->get('/categories/add-ddd');
         $this->assertResponseError(); //エラーが出て正解
-        // $this->assertResponseContains('カテゴリーコード');
-        // $this->assertResponseContains('カテゴリー名');
-        // $this->assertResponseContains('サブ カテゴリー名');
-        // $this->assertContentType('text/html'); 
     }
-
-    public function testTrueAddView()
+    public function testFailAddView02()
     {
-        // $this->markTestIncomplete('Not implemented yet.');
-        // 画面が正常に描画されているかテスト
-        // ログイン処理の実行
-        // ログイン処理の実行
-        // $this->post('/users/login', [
-        //     'username' => 'dev',
-        //     'password' => 'aaaa0000'
-        // ]);
         $this->get('/categories/add');
         $this->assertResponseOk();
-        // $this->assertResponseContains('カテゴリーコード');
-        // $this->assertResponseContains('カテゴリー名');
-        // $this->assertResponseContains('サブ カテゴリー名');
-        // $this->assertContentType('text/html'); 
+        $this->assertResponseNotContains('categoryCd');
     }
+    public function testFailAddPost01()
+    {
+        // ----- このテストは実際あり得ないので価値なし ------ //
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        // 入力内容が全くない(POSTデータが全くない)
+        $data = [];
+        $this->post('/categories/add',$data);
+        $this->assertResponseError(); //エラーが出て正解
+    }
+    public function testFailAddPost02()
+    {
+        // 入力内容が全くない(全項目空でくる)
+        $data = [
+            'categoryCd'      => '',
+            'categoryName'    => '',
+            'subCategoryName' => '',
+        ];
+        $this->post('/categories/add',$data);
+        $this->assertResponseError(); //エラーが出て正解
+    }
+    public function testFailAddPost03()
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        // 必須項目がない
+        $data = [
+            'categoryCd'      => '', // TODO Validationエラーはコントローラー側ではキャッチできない？
+            'categoryName'    => 'テスト用データ（メイン）',
+            'subCategoryName' => 'テスト用データ（サブ）',
+        ];
+        $this->post('/categories/add',$data);
+        $this->assertResponseSuccess(); //エラーが出て正解
+    }
+    public function testFailAddPost04()
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        // 必須項目がある
+        $today    = new FrozenTime('2021-03-31 00:00');
+        $tomorrow = new FrozenTime('2021-03-31 00:00');
+        $data = [
+            'categoryCd'      => '99999',
+            'categoryName'    => 'テスト用データ（メイン）',
+            'subCategoryName' => 'テスト用データ（サブ）',
+            'created'         => $today,
+            'modified'        => $tomorrow
+        ];
+        $this->post('/categories/add',$data);
+        $this->assertResponseSuccess(); //エラーが出て正解
+        $customers = TableRegistry::get('Categories');
+        $query = $customers->find()->where(['categoryCd' => $data['categoryCd']]);
+        $result = $query->first()->toArray();
+    }
+    public function testTrueAddPost01()
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        // 必須項目がある
+        $data = [
+            'categoryCd'      => '01',
+            'categoryName'    => 'テスト用データ（メイン）',
+            'subCategoryName' => 'テスト用データ（サブ）',
+        ];
+        $this->post('/categories/add',$data);
+        $this->assertResponseSuccess(); //エラーが出て正解
+    }
+    public function testTrueAddPost02()
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        // 必須項目がある
+        $today    = new FrozenTime('2021-03-31 00:00');
+        $tomorrow = new FrozenTime('2021-03-31 00:00');
+        $data = [
+            'categoryCd'      => '99999',
+            'categoryName'    => 'テスト用データ（メイン）',
+            'subCategoryName' => 'テスト用データ（サブ）',
+            'created'         => $today,
+            'modified'        => $tomorrow
+        ];
+        $this->post('/categories/add',$data);
+        $this->assertResponseSuccess(); //エラーが出て正解
+        $customers = TableRegistry::get('Categories');
+        $query = $customers->find()->where(['categoryCd' => $data['categoryCd']]);
+        $result = $query->first()->toArray();
+        $this->assertEquals($result['categoryCd'], $data['categoryCd']);
+        $this->assertEquals($result['categoryName'], $data['categoryName']);
+        $this->assertEquals($result['subCategoryName'], $data['subCategoryName']);
+        $this->assertEquals($result['created'], $data['created']);
+        $this->assertEquals($result['modified'], $data['modified']);
+    }
+
+    
     /**
      * Test edit method
      *
