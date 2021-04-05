@@ -29,7 +29,8 @@ class CategoriesControllerTest extends TestCase
     //     'app.Categories',
     // ];
     public $controller = null;
-
+    public $fixtures = ['app.Categories'];
+    public $autoFixtures = true; // fixtureファイルの最新化制御
     /**
      * setup method
      *
@@ -62,7 +63,11 @@ class CategoriesControllerTest extends TestCase
             ->setMethods(null)
             ->getMock();
     }
-
+    public function tearDown()
+    {
+        unset($this->Categories);
+        parent::tearDown();
+    }
     /**
      * Test index method
      *
@@ -150,17 +155,17 @@ class CategoriesControllerTest extends TestCase
             'subCategoryName' => 'テスト用データ（サブ）',
         ];
         $this->post('/categories/add',$data);
-        $this->assertResponseSuccess(); //エラーが出て正解
+        $this->assertResponseError(); //エラーが出て正解
     }
     public function testFailAddPost04()
     {
         $this->enableCsrfToken();
         $this->enableSecurityToken();
-        // 必須項目がある
+        // カテゴリーコードが複数データある
         $today    = new FrozenTime('2021-03-31 00:00');
         $tomorrow = new FrozenTime('2021-03-31 00:00');
         $data = [
-            'categoryCd'      => '99999',
+            'categoryCd'      => '',
             'categoryName'    => 'テスト用データ（メイン）',
             'subCategoryName' => 'テスト用データ（サブ）',
             'created'         => $today,
@@ -169,8 +174,10 @@ class CategoriesControllerTest extends TestCase
         $this->post('/categories/add',$data);
         $this->assertResponseSuccess(); //エラーが出て正解
         $customers = TableRegistry::get('Categories');
-        $query = $customers->find()->where(['categoryCd' => $data['categoryCd']]);
-        $result = $query->first()->toArray();
+        $query = $customers->find()->where(['categoryName' => $data['categoryName']]);
+        $result = $query->toArray();
+        // データが登録できないため取得はゼロ
+        $this->assertEquals(0, count($result));
     }
     public function testTrueAddPost01()
     {
