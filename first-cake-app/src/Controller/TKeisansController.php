@@ -12,9 +12,10 @@ use App\Controller\AppController;
  */
 class TKeisansController extends AppController
 {
-    public $components = [
+    public $components = [ // TODO 単数形でOK（コンポーネントは単数）
         'TKeisan',
-        'User'
+        'User',
+        'Category'
     ];
     /**
      * Index method
@@ -54,6 +55,9 @@ class TKeisansController extends AppController
         $tKeisan = $this->TKeisans->newEntity();
         // ユーザーデータ取得 // TODO あとで対応する
         $users = $this->User->getAllUser();
+        // カテゴリー連携
+        $categories = $this->Category->getAllList();
+
         if ($this->request->is('post')) {
             $tKeisan = $this->TKeisans->patchEntity($tKeisan, $this->request->getData());
             if ($this->TKeisans->save($tKeisan)) {
@@ -66,6 +70,7 @@ class TKeisansController extends AppController
         // -------- データセット -------- //
         $this->set(compact('tKeisan'));
         $this->set(compact('users'));
+        $this->set(compact('categories'));
     }
 
     /**
@@ -83,6 +88,10 @@ class TKeisansController extends AppController
         ]);
         // ユーザーデータ取得 // TODO あとで対応する
         $users = $this->User->getAllUser();
+
+        // カテゴリー連携
+        $categories = $this->Category->getAllList();
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $tKeisan = $this->TKeisans->patchEntity($tKeisan, $this->request->getData());
             if ($this->TKeisans->save($tKeisan)) {
@@ -96,6 +105,8 @@ class TKeisansController extends AppController
         
         // ユーザーデータ追加
         $this->set(compact('users'));
+        // カテゴリー連携
+        $this->set(compact('categories'));
     }
 
     /**

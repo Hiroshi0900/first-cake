@@ -44,9 +44,6 @@ class TkeisanComponent extends Component
     protected function _getTkeisanDetail(int $id)
     {
         $t = TableRegistry::get('t_keisans');
-        // $tKeisan = $t->get($id, [
-        //     'contain' => [],
-        // ]);
         $tKeisan = $t->find();
         $tKeisan->join([
             'table' => 'users',

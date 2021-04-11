@@ -75,4 +75,25 @@ class CategoriesTable extends Table
 
         return $validator;
     }
+
+    /**
+     *  データ取得ファンクション
+     *
+     * @param // なんていうオブジェクトやっけ、クエリのインスタンスみたいなやつ
+     * @return Query Queyオブジェクト
+     */
+    public function findAllUser(Query $query): Query
+    {
+        return $query->select([
+            'categories.categoryCd',
+            'categories.categoryName',
+            'categories.subCategoryName',
+        ])
+        ->where([
+            'categories.categoryCd is not ' => null
+        ])
+        ->order([
+            'categories.categoryCd' => 'ASC'
+        ]);
+    }
 }

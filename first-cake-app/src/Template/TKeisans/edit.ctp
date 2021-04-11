@@ -24,6 +24,11 @@ $selUser = [];
 foreach($users as $uRow){
     $selUser[$uRow->id] = $uRow->username;
 }
+// TODO あってるのかな、もっとコンパクトにデータを作れそうやけど。。
+$selCategory = [];
+foreach($categories as $cRow){
+    $selCategory[$cRow['categoryCd']] = $cRow['categoryName'];
+}
 ?>
     <fieldset>
         <legend><?= __('Edit T Keisan') ?></legend>
@@ -42,7 +47,10 @@ foreach($users as $uRow){
                 'empty' => true,
                 'type'  => 'text'
             ]);
-            echo $this->Form->control('category');
+            // echo $this->Form->control('category');
+            echo $this->Form->input('category', 
+                array('label'=>'Category Name', 'type'=>'select', 'options'=>$selCategory , 'value' =>$tKeisan->category)
+            );
             echo $this->Form->control('sum');
             echo $this->Form->control('koumoku');
         ?>
