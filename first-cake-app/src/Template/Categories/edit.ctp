@@ -21,10 +21,13 @@
     <fieldset>
         <legend><?= __('Edit Category') ?></legend>
         <?php
-            echo $this->Form->control('categoryCd');
-            echo $this->Form->control('categoryName');
-            echo $this->Form->control('subCategoryName');
-            echo $this->Form->control('koumoku');
+            // echo $this->Form->control('categoryCd');
+            // echo $this->Form->control('categoryName');
+            // echo $this->Form->control('subCategoryName');
+            // echo $this->Form->control('koumoku');
+            echo $this->Form->control('categoryCd',['label' => 'カテゴリーコード']);
+            echo $this->Form->control('categoryName',['label' => 'カテゴリー名']);
+            echo $this->Form->control('subCategoryName',['label' => 'サブカテゴリー名']);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

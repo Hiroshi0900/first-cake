@@ -54,6 +54,7 @@ class CategoriesTable extends Table
         $validator
             ->scalar('categoryCd')
             ->maxLength('categoryCd', 20)
+            // ->requirePresence('categoryCd', 'create');
             ->requirePresence('categoryCd', 'create')
             ->notEmptyString('categoryCd');
 

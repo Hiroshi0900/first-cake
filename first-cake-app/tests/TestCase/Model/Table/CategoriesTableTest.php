@@ -4,6 +4,7 @@ namespace App\Test\TestCase\Model\Table;
 use App\Model\Table\CategoriesTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Text;
 
 /**
  * App\Model\Table\CategoriesTable Test Case
@@ -65,8 +66,34 @@ class CategoriesTableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefault()
+    // public function testValidationDefault()
+    public function testValidationFail01()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        // カテゴリーコードがないとエラー
+        $category = $this->Categories->newEntity([
+            'categoryCd' => '',
+            'categoryName' => 'testカテゴリー',
+            'subCategoryName' => 'testサブカテゴリー',
+        ]);
+        $expected = [
+            'categoryCd' => ['_empty' => 'This field cannot be left empty'],
+        ];
+        $this->assertSame($expected, $category->getErrors()); // 第一引数と第二引数が一致（エラーがない）
+    }
+    // 取得テスト(fixtureの確認)
+    public function testValidateFailGet01(){
+        $category = $this->Categories->get(1, [
+            'contain' => [],
+        ]);
+        // $this->assertEmpty($notTaggedArticle->tags);
+    }
+    // 公式チュートリアルより
+    public function beforeSave($event, $entity, $options)
+    {
+        if ($entity->isNew() && !$entity->slug) {
+            $sluggedTitle = Text::slug($entity->categoryCd);
+            // スラグをスキーマで定義されている最大長に調整
+            $entity->slug = substr($sluggedTitle, 0, 191);
+        }
     }
 }

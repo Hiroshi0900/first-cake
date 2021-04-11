@@ -26,22 +26,6 @@ class CategoriesController extends AppController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id Category id.
-     * @return \Cake\Http\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $category = $this->Categories->get($id, [
-            'contain' => [],
-        ]);
-
-        $this->set('category', $category);
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
@@ -50,9 +34,6 @@ class CategoriesController extends AppController
     {
         $category = $this->Categories->newEntity();
         if ($this->request->is('post')) {
-// echo'<pre>';
-// var_dump($category, $this->request->getData());
-// exit;
             $category = $this->Categories->patchEntity($category, $this->request->getData());
             if ($this->Categories->save($category)) {
                 $this->Flash->success(__('The category has been saved.'));
@@ -87,7 +68,7 @@ class CategoriesController extends AppController
             $this->Flash->error(__('The category could not be saved. Please, try again.'));
         }
         $this->set(compact('category'));
-        $this->render('/categories/edit/'.$id);
+        $this->render('/categories/edit');
     }
 
     /**

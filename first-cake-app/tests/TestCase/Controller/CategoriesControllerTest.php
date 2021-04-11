@@ -29,7 +29,8 @@ class CategoriesControllerTest extends TestCase
     //     'app.Categories',
     // ];
     public $controller = null;
-
+    public $fixtures = ['app.Categories'];
+    public $autoFixtures = true; // fixtureファイルの最新化制御
     /**
      * setup method
      *
@@ -62,27 +63,11 @@ class CategoriesControllerTest extends TestCase
             ->setMethods(null)
             ->getMock();
     }
-
-    /**
-     * Test index method
-     *
-     * @return void
-     */
-    public function testIndex()
+    public function tearDown()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        unset($this->Categories);
+        parent::tearDown();
     }
-
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testView()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
     public function testFailIndexView()
     {
         // $this->markTestIncomplete('Not implemented yet.');
@@ -116,7 +101,6 @@ class CategoriesControllerTest extends TestCase
     {
         $this->get('/categories/add');
         $this->assertResponseOk();
-        $this->assertResponseNotContains('categoryCd');
     }
     public function testFailAddPost01()
     {
@@ -126,7 +110,22 @@ class CategoriesControllerTest extends TestCase
         // 入力内容が全くない(POSTデータが全くない)
         $data = [];
         $this->post('/categories/add',$data);
-        $this->assertResponseError(); //エラーが出て正解
+        $today    = new FrozenTime('2021-03-31 00:00');
+        $tomorrow = new FrozenTime('2021-03-31 00:00');
+        $data = [
+            'categoryCd'      => '',
+            'categoryName'    => 'テスト用データ（メイン）',
+            'subCategoryName' => 'テスト用データ（サブ）',
+            'created'         => $today,
+            'modified'        => $tomorrow
+        ];
+        $this->post('/categories/add',$data);
+        $this->assertResponseSuccess(); //エラーが出て正解
+        $customers = TableRegistry::get('Categories');
+        $query = $customers->find()->where(['categoryName' => $data['categoryName']]);
+        $result = $query->toArray();
+        // データが登録できないため取得はゼロ
+        $this->assertEquals(0, count($result));
     }
     public function testFailAddPost02()
     {
@@ -143,24 +142,11 @@ class CategoriesControllerTest extends TestCase
     {
         $this->enableCsrfToken();
         $this->enableSecurityToken();
-        // 必須項目がない
-        $data = [
-            'categoryCd'      => '', // TODO Validationエラーはコントローラー側ではキャッチできない？
-            'categoryName'    => 'テスト用データ（メイン）',
-            'subCategoryName' => 'テスト用データ（サブ）',
-        ];
-        $this->post('/categories/add',$data);
-        $this->assertResponseSuccess(); //エラーが出て正解
-    }
-    public function testFailAddPost04()
-    {
-        $this->enableCsrfToken();
-        $this->enableSecurityToken();
-        // 必須項目がある
+        // カテゴリーコードが複数データある
         $today    = new FrozenTime('2021-03-31 00:00');
         $tomorrow = new FrozenTime('2021-03-31 00:00');
         $data = [
-            'categoryCd'      => '99999',
+            'categoryCd'      => '',
             'categoryName'    => 'テスト用データ（メイン）',
             'subCategoryName' => 'テスト用データ（サブ）',
             'created'         => $today,
@@ -169,8 +155,10 @@ class CategoriesControllerTest extends TestCase
         $this->post('/categories/add',$data);
         $this->assertResponseSuccess(); //エラーが出て正解
         $customers = TableRegistry::get('Categories');
-        $query = $customers->find()->where(['categoryCd' => $data['categoryCd']]);
-        $result = $query->first()->toArray();
+        $query = $customers->find()->where(['categoryName' => $data['categoryName']]);
+        $result = $query->toArray();
+        // データが登録できないため取得はゼロ
+        $this->assertEquals(0, count($result));
     }
     public function testTrueAddPost01()
     {
@@ -217,54 +205,57 @@ class CategoriesControllerTest extends TestCase
      *
      * @return void
      */
-    public function testTrueEditView()
+    public function testTrueEditView01()
     {
-        // $this->markTestIncomplete('Not implemented yet.');
-        // 画面が正常に描画されているかテスト
-        // $this->get('/category/edit');
-        // $this->assertResponseOk();
-        // $this->markTestIncomplete('Not implemented yet.');
-        // $this->assertContentType('text/html'); 
-
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
         $this->get('/categories/edit/1');
         $this->assertResponseOk();
-        // // プロパティ
-        // $propertyTemplate = $this->_getReflectionProperty('_template');
-        // $propertyTemplate->getValue($this->controller);
-        // $tKeisan = $this->Categories->get(1, [
-        //     'contain' => [],
-        // ]);
+    }
+    public function testTrueEditView02()
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $this->get('/categories/edit/1');
+        $this->assertResponseOk();
+        // 項目のヘッダー
+        $this->assertResponseContains('カテゴリーコード');
+        $this->assertResponseContains('カテゴリー名');
+        $this->assertResponseContains('サブカテゴリー名');
+        // 項目データ
+        $customers = TableRegistry::get('Categories');
+        $query = $customers->find()->where(['id' => 1]);
+        $result = $query->first()->toArray();
+        $this->assertResponseContains($result['categoryCd']);
+        $this->assertResponseContains($result['categoryName']);
+        $this->assertResponseContains($result['subCategoryName']);
         
-// var_dump($this->viewVariable('users'));
-// exit;
-        // $this->assertResponseContains('カテゴリーコード');
-        // $this->assertResponseContains('カテゴリー名');
-        // $this->assertResponseContains('サブ カテゴリー名');
     }
     // 失敗テストを作成
     public function testFailEditView01()
     {
-
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
         $this->get('/category/edit/fail');
         $this->assertResponseError(); //エラーが出て正解
     }
-    // 失敗テストを作成
-    // public function testFailEditView02()
-    // {
-
-    //     $this->get('/category/edit/fail');
-    //     $this->assertResponseError(); //エラーが出て正解
-    // }
+    public function testFailEditView02()
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $this->get('/categories/edit'); // idがない
+        $this->assertResponseError(); //エラーが出て正解
+    }
 
     /**
      * Test delete method
      *
      * @return void
      */
-    public function testDelete()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+    // public function testDelete()
+    // {
+    //     $this->markTestIncomplete('Not implemented yet.');
+    // }
     // テスト用ファンクションの呼び出し
     protected function _getReflectionMethod($method = null)
     {
